@@ -43,6 +43,14 @@ namespace Galactus.Schema
         [UseProjection]
         [UseFiltering]
         [UseSorting]
+        public IQueryable<AdventureWorks.Domain.Models.Location> GetLocations([Service] AdventureWorksContext context) =>
+            context.Locations;
+
+        [Serial]
+        [UsePaging]
+        [UseProjection]
+        [UseFiltering]
+        [UseSorting]
         public IQueryable<Product> GetProducts([Service] AdventureWorksContext context) =>
             context.Products;
 
