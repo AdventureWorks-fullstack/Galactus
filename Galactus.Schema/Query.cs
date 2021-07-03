@@ -63,7 +63,10 @@ namespace Galactus.Schema
             context.PurchaseOrderHeaders;
 
         [Serial]
+        [UsePaging]
         [UseProjection]
+        [UseFiltering]
+        [UseSorting]
         public IQueryable<SalesOrderHeader> GetSales([Service] AdventureWorksContext context) =>
             context.SalesOrderHeaders;
 
