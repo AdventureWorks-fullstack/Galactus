@@ -10,23 +10,30 @@ using Microsoft.Extensions.Hosting;
 using AdventureWorks.Domain;
 using Microsoft.EntityFrameworkCore;
 using Galactus.Schema;
+using Microsoft.Extensions.Configuration;
 
 namespace Galactus
 {
     public class Startup
     {
-        const string corsPolicy = "YOLO";
+        public Startup(IConfiguration config)
+        {
+            _config = config;
+        }
+
+        readonly IConfiguration _config;
+        readonly string _corsPolicy = "YOLO";
 
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddCors(options => options.AddPolicy(corsPolicy, builder =>
+            services.AddCors(options => options.AddPolicy(_corsPolicy, builder =>
             {
                 builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
             }));
 
-            services.AddDbContext<AdventureWorksContext>(options => options.UseSqlServer("Server=localhost,1433;Database=AdventureWorks;User Id=SA;Password=my_password"));
+            services.AddDbContext<AdventureWorksContext>(options => options.UseSqlServer(_config.GetConnectionString("AdventureWorksDb")));
 
             services
                 .AddGraphQLServer()
@@ -45,7 +52,7 @@ namespace Galactus
 
             app.UseDeveloperExceptionPage();
             app.UseRouting();
-            app.UseCors(corsPolicy);
+            app.UseCors(_corsPolicy);
 
             app.UseEndpoints(endpoints =>
             {
