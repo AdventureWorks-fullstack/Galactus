@@ -15,10 +15,17 @@ namespace Galactus
 {
     public class Startup
     {
+        const string corsPolicy = "YOLO";
+
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors(options => options.AddPolicy(corsPolicy, builder =>
+            {
+                builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+            }));
+
             services.AddDbContext<AdventureWorksContext>(options => options.UseSqlServer("Server=localhost,1433;Database=AdventureWorks;User Id=SA;Password=my_password"));
 
             services
@@ -37,8 +44,8 @@ namespace Galactus
             }
 
             app.UseDeveloperExceptionPage();
-
             app.UseRouting();
+            app.UseCors(corsPolicy);
 
             app.UseEndpoints(endpoints =>
             {
