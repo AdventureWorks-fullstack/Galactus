@@ -11,6 +11,7 @@ using AdventureWorks.Domain;
 using Microsoft.EntityFrameworkCore;
 using Galactus.Schema;
 using Microsoft.Extensions.Configuration;
+using Galactus.Schema.Mutations;
 
 namespace Galactus
 {
@@ -38,6 +39,7 @@ namespace Galactus
             services
                 .AddGraphQLServer()
                 .AddQueryType<Query>()
+                .AddMutationType<Mutation>()
                 .AddProjections()
                 .AddFiltering()
                 .AddSorting();
