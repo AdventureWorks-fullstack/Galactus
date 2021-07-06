@@ -10,36 +10,46 @@ namespace Galactus.Schema.Mutations
     public partial class Mutation
     {
         public async Task<UpdateInventoryPayload> UpdateInventoryMutation(
-            UpdateInventoryInput input,
-            [Service] AdventureWorksContext context
-        )
+            [Service] AdventureWorksContext context,
+            UpdateInventoryInput input)
         {
-            string savePoint = nameof(UpdateInventoryMutation);
-            using var transaction = context.Database.BeginTransaction();
             try
             {
-                transaction.CreateSavepoint(savePoint);
-
                 var productInventory = await context.ProductInventories
-                .FirstOrDefaultAsync(x => x.LocationId == input.LocationId && x.ProductId == input.ProductId);
+                    .FirstOrDefaultAsync(x => x.LocationId == input.LocationId && x.ProductId == input.ProductId);
 
-                if (input.UpdateAmount is not null && input.UpdateAmount != 0)
+                // A new product is being added
+                if (productInventory is null)
                 {
-                    productInventory.Quantity += (short)input.UpdateAmount;
-                    await context.SaveChangesAsync();
+                    productInventory = new ProductInventory { ProductId = input.ProductId, LocationId = input.LocationId };
+                    await context.ProductInventories.AddAsync(productInventory);
                 }
-                if (!string.IsNullOrEmpty(input.NewShelf) && productInventory.Shelf != input.NewShelf)
+                // Update the existing or new inventory
+                if (input.UpdateAmount != 0)
                 {
-                    productInventory.Shelf = input.NewShelf;
-                    await context.SaveChangesAsync();
+                    productInventory.Quantity += input.UpdateAmount;
+                }
+                if (!string.IsNullOrEmpty(input.NewLocationId) && productInventory.LocationInventoryId != input.NewLocationId)
+                {
+                    productInventory.LocationInventoryId = input.NewLocationId;
+
+                    var inventoryHistory = new LocationInventoryHistory
+                    {
+                        LocationInventoryId = input.NewLocationId,
+                        LocationId = input.LocationId,
+                        ProductId = input.ProductId,
+                        BusinessEntityId = input.EmployeeId,
+                        MovedHereWhen = DateTime.Now
+                    };
+
+                    await context.LocationInventoryHistories.AddAsync(inventoryHistory);
                 }
 
-                await transaction.CommitAsync();
+                await context.SaveChangesAsync();
                 return new UpdateInventoryPayload(productInventory);
             }
             catch (Exception ex)
             {
-                await transaction.RollbackToSavepointAsync(savePoint);
                 throw;
             }
         }
@@ -47,9 +57,10 @@ namespace Galactus.Schema.Mutations
 
     public record UpdateInventoryInput(
         int ProductId,
+        int EmployeeId,
         short LocationId,
-        short? UpdateAmount,
-        string NewShelf
+        short UpdateAmount,
+        string NewLocationId
     );
 
     public class UpdateInventoryPayload
