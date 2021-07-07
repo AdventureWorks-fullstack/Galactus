@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Galactus.Schema;
 using Microsoft.Extensions.Configuration;
 using Galactus.Schema.Mutations;
+using Galactus.Schema.Queries;
 
 namespace Galactus
 {

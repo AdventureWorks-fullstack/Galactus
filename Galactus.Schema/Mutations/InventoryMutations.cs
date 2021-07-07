@@ -29,20 +29,21 @@ namespace Galactus.Schema.Mutations
                 {
                     productInventory.Quantity += input.UpdateAmount;
                 }
-                if (!string.IsNullOrEmpty(input.NewLocationId) && productInventory.LocationInventoryId != input.NewLocationId)
+                if (!string.IsNullOrEmpty(input.NewLocationId) && productInventory.InventoryId != input.NewLocationId)
                 {
-                    productInventory.LocationInventoryId = input.NewLocationId;
+                    productInventory.InventoryId = input.NewLocationId;
 
-                    var inventoryHistory = new LocationInventoryHistory
+                    // TODO change enddate on the previous one
+                    var inventoryHistory = new InventoryHistory
                     {
-                        LocationInventoryId = input.NewLocationId,
+                        InventoryId = input.NewLocationId,
                         LocationId = input.LocationId,
                         ProductId = input.ProductId,
                         BusinessEntityId = input.EmployeeId,
-                        MovedHereWhen = DateTime.Now
+                        StartDate = DateTime.Now
                     };
 
-                    await context.LocationInventoryHistories.AddAsync(inventoryHistory);
+                    await context.InventoryHistories.AddAsync(inventoryHistory);
                 }
 
                 await context.SaveChangesAsync();

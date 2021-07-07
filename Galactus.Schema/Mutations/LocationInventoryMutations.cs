@@ -17,14 +17,14 @@ namespace Galactus.Schema.Mutations
         {
             try
             {
-                var locationInventory = new List<LocationInventory>();
+                var locationInventory = new List<Inventory>();
                 var locationInventoryId = "";
 
                 for (int nbShelves = 0; nbShelves < input.Shelves.Length; nbShelves++)
                 {
-                    for (int nbRows = 0; nbRows < input.Shelves[nbShelves].Rows.Length; nbRows++)
+                    for (int nbRows = 0; nbRows < input.Shelves[nbShelves].Length; nbRows++)
                     {
-                        for (int nbBins = 0; nbBins < input.Shelves[nbShelves].Rows[nbRows].Bins; nbBins++)
+                        for (int nbBins = 0; nbBins < input.Shelves[nbShelves][nbRows]; nbBins++)
                         {
                             // A-01-01-01
                             locationInventoryId =
@@ -33,16 +33,16 @@ namespace Galactus.Schema.Mutations
                                 $"{(nbRows + 1).ToString("00")}-" +
                                 $"{(nbBins + 1).ToString("00")}";
 
-                            locationInventory.Add(new LocationInventory
+                            locationInventory.Add(new Inventory
                             {
-                                LocationInventoryId = locationInventoryId,
+                                InventoryId = locationInventoryId,
                                 LocationId = input.LocationId,
                             });
                         }
                     }
                 }
 
-                await context.LocationInventories.AddRangeAsync(locationInventory);
+                await context.Inventories.AddRangeAsync(locationInventory);
                 await context.SaveChangesAsync();
 
                 return new AddShelfPayload(locationInventory);
@@ -57,24 +57,16 @@ namespace Galactus.Schema.Mutations
     public record AddShelfInput(
         short LocationId,
         string Prefix,
-        Shelf[] Shelves
-        );
-
-    public record Shelf(
-        Row[] Rows
-        );
-
-    public record Row(
-        byte Bins
+        byte[][] Shelves
         );
 
     public class AddShelfPayload
     {
-        public AddShelfPayload(List<LocationInventory> locationInventories)
+        public AddShelfPayload(List<Inventory> locationInventories)
         {
-            CreatedLocationInventories = locationInventories;
+            CreatedInventories = locationInventories;
         }
 
-        public List<LocationInventory> CreatedLocationInventories { get; set; }
+        public List<Inventory> CreatedInventories { get; set; }
     }
 }

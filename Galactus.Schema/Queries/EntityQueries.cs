@@ -10,9 +10,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Galactus.Schema
+namespace Galactus.Schema.Queries
 {
-    public class Query
+    public partial class Query
     {
         [Serial]
         [UsePaging]
