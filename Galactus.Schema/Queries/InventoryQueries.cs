@@ -17,7 +17,15 @@ namespace Galactus.Schema.Queries
         [UseProjection]
         [UseFiltering]
         [UseSorting]
-        public IQueryable<Inventory> GetEmptyInventory([Service] AdventureWorksContext context, short locationId) =>
-            context.Inventories.Where(x => x.LocationId == locationId && x.ProductInventory.Count() <= 0); 
+        public IQueryable<Inventory> GetInventoryEmpty([Service] AdventureWorksContext context, short locationId) =>
+            context.Inventories.Where(x => x.LocationId == locationId && x.ProductInventory.Count() <= 0);
+
+        [Serial]
+        [UsePaging]
+        [UseProjection]
+        [UseFiltering]
+        [UseSorting]
+        public IQueryable<Inventory> GetInventoryMultiple([Service] AdventureWorksContext context, short locationId) =>
+            context.Inventories.Where(x => x.LocationId == locationId && x.ProductInventory.Count() > 1);
     }
 }
