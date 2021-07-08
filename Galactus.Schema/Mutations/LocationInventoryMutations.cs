@@ -1,5 +1,6 @@
 ﻿using AdventureWorks.Domain;
 using AdventureWorks.Domain.Models;
+using Galactus.Schema.Common;
 using HotChocolate;
 using System;
 using System.Collections.Generic;
@@ -61,13 +62,14 @@ namespace Galactus.Schema.Mutations
         byte[][] Shelves
         );
 
-    public class AddShelfPayload
+    public class AddShelfPayload : Payload
     {
         public AddShelfPayload(List<Inventory> locationInventories)
         {
             CreatedInventories = locationInventories;
         }
+        public AddShelfPayload(IReadOnlyList<UserError> errors) : base(errors) { }
 
-        public List<Inventory> CreatedInventories { get; set; }
+        public List<Inventory>? CreatedInventories { get; set; }
     }
 }

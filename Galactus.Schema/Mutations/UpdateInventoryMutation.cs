@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using AdventureWorks.Domain;
 using AdventureWorks.Domain.Models;
+using Galactus.Schema.Common;
 using HotChocolate;
 using Microsoft.EntityFrameworkCore;
 
@@ -66,13 +67,14 @@ namespace Galactus.Schema.Mutations
         string NewLocationId
     );
 
-    public class UpdateInventoryPayload
+    public class UpdateInventoryPayload : Payload
     {
         public UpdateInventoryPayload(ProductInventory productInventory)
         {
             ProductInventory = productInventory;
         }
+        public UpdateInventoryPayload(IReadOnlyList<UserError> errors) : base(errors) { }
 
-        public ProductInventory ProductInventory { get; set; }
+        public ProductInventory? ProductInventory { get; set; }
     }
 }

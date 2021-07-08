@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AdventureWorks.Domain;
 using AdventureWorks.Domain.Models;
+using Galactus.Schema.Common;
 using HotChocolate;
 using Microsoft.EntityFrameworkCore;
 
@@ -44,13 +45,14 @@ namespace Galactus.Schema.Mutations
         }
     }
 
-    public class AssignInventoryPayload
+    public class AssignInventoryPayload : Payload
     {
         public AssignInventoryPayload(List<ProductInventory> productInventories)
         {
             ProductInventories = productInventories;
         }
+        public AssignInventoryPayload(IReadOnlyList<UserError> errors) : base(errors) {}
 
-        public List<ProductInventory> ProductInventories { get; set; }
+        public List<ProductInventory>? ProductInventories { get; set; }
     }
 }
