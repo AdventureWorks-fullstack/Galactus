@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Location = AdventureWorks.Domain.Models.Location;
 
 namespace Galactus.Schema.Queries
 {
@@ -41,7 +42,7 @@ namespace Galactus.Schema.Queries
         [UseProjection]
         [UseFiltering]
         [UseSorting]
-        public IQueryable<AdventureWorks.Domain.Models.Location> GetLocations([Service] AdventureWorksContext context) =>
+        public IQueryable<Location> GetLocations([Service] AdventureWorksContext context) =>
             context.Locations;
 
         [Serial]

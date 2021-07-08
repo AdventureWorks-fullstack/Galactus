@@ -13,6 +13,8 @@ using Galactus.Schema;
 using Microsoft.Extensions.Configuration;
 using Galactus.Schema.Mutations;
 using Galactus.Schema.Queries;
+using Galactus.Schema.Types;
+//using Galactus.Schema.TypeExtensions;
 
 namespace Galactus
 {
@@ -41,6 +43,9 @@ namespace Galactus
                 .AddGraphQLServer()
                 .AddQueryType<Query>()
                 .AddMutationType<Mutation>()
+                .AddType<LocationType>()
+                //.AddTypeExtension<LocationExtensions>()
+                //.AddType<InventoryReportType>()
                 .AddProjections()
                 .AddFiltering()
                 .AddSorting();
