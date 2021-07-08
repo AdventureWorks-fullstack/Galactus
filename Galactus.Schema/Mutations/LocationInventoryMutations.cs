@@ -47,8 +47,9 @@ namespace Galactus.Schema.Mutations
 
                 return new AddShelfPayload(locationInventory);
             }
-            catch (Exception ex)
+            catch
             {
+                // TODO log ex
                 throw;
             }
         }

@@ -36,8 +36,9 @@ namespace Galactus.Schema.Mutations
                 await context.SaveChangesAsync();
                 return new AssignInventoryPayload(productsWithoutInventory);
             }
-            catch (Exception ex)
+            catch
             {
+                // TODO log ex
                 throw;
             }
         }
