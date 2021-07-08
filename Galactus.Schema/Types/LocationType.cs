@@ -18,7 +18,8 @@ namespace Galactus.Schema.Types
 
             descriptor.Field(f => f.LocationId).IsProjected(true);
 
-            descriptor.Field("inventoryReport").ResolveWith<Resolver>(f => f.InventoryReport(default!, default!));
+            descriptor.Field("inventory")
+                .ResolveWith<Resolver>(f => f.InventoryReport(default!, default!));
         }
 
         private class Resolver
@@ -41,13 +42,28 @@ namespace Galactus.Schema.Types
         readonly AdventureWorksContext _context;
         readonly Location _location;
 
-        //[IsProjected(true)]
-        public short Id() => _location.LocationId;
-        //private string apa;
-        //public short LocationId { get { return _location.LocationId; } set { _location.LocationId = value; } }
-        public string Name() => _location.Name;
-        //[IsProjected(true)]
+        public int GetCountTotalInventory() =>
+            _context.Inventories.Where(x => x.LocationId == _location.LocationId).Count();
+
+        public int GetCountOccupiedInventory() =>
+            _context.Inventories.Where(x => x.LocationId == _location.LocationId && x.ProductInventory.Count() > 0).Count();
+
+        public int GetCountEmptyInventory() =>
+            _context.Inventories.Where(x => x.LocationId == _location.LocationId && x.ProductInventory.Count() <= 0).Count();
+
+        [Serial]
+        [UsePaging]
+        public IQueryable<Inventory> GetTotalInventory() =>
+            _context.Inventories.Where(x => x.LocationId == _location.LocationId);
+
+        [Serial]
+        [UsePaging]
+        public IQueryable<Inventory> GetOccupiedInventory() =>
+            _context.Inventories.Where(x => x.LocationId == _location.LocationId && x.ProductInventory.Count() > 0);
+
+        [Serial]
+        [UsePaging]
         public IQueryable<Inventory> GetEmptyInventory() =>
-        _context.Inventories.Where(x => x.LocationId == _location.LocationId && x.ProductInventory.Count() <= 0);
+            _context.Inventories.Where(x => x.LocationId == _location.LocationId && x.ProductInventory.Count() <= 0);
     }
 }
