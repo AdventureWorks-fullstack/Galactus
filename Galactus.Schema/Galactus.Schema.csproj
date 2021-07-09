@@ -6,7 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AdventureWorks.Domain" Version="1.0.29" />
     <PackageReference Include="hotchocolate.aspnetcore" Version="12.0.0-preview.22" />
     <PackageReference Include="HotChocolate.Data" Version="12.0.0-preview.22" />
   </ItemGroup>
