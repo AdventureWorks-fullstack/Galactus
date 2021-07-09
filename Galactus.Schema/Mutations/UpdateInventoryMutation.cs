@@ -33,9 +33,12 @@ namespace Galactus.Schema.Mutations
                 }
                 if (!string.IsNullOrEmpty(input.NewLocationId) && productInventory.InventoryId != input.NewLocationId)
                 {
+                    // Update the inventory position of the product
                     productInventory.InventoryId = input.NewLocationId;
 
-                    // TODO change enddate on the previous one
+                    var dateTime = DateTime.Now; 
+
+                    // Create a mew history post
                     var inventoryHistory = new InventoryHistory
                     {
                         InventoryId = input.NewLocationId,
@@ -46,6 +49,13 @@ namespace Galactus.Schema.Mutations
                     };
 
                     await context.InventoryHistories.AddAsync(inventoryHistory);
+
+                    // Update EndDate of the previous history post
+
+                    var previous = await context.InventoryHistories.FirstOrDefaultAsync(x =>
+                    x.LocationId == input.LocationId &&
+                    x.ProductId == input.ProductId &&
+                    x.EndDate == null);
                 }
 
                 await context.SaveChangesAsync();

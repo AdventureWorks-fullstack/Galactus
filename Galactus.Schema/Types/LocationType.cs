@@ -1,8 +1,6 @@
-using System.Linq;
 using AdventureWorks.Domain;
-using AdventureWorks.Domain.Models;
+using Galactus.Schema.Models;
 using HotChocolate;
-using HotChocolate.Data;
 using HotChocolate.Types;
 using Location = AdventureWorks.Domain.Models.Location;
 
@@ -29,41 +27,5 @@ namespace Galactus.Schema.Types
                 return new InventoryReport(context, location);
             }
         }
-    }
-
-    public class InventoryReport
-    {
-        public InventoryReport(AdventureWorksContext context, Location location)
-        {
-            _context = context;
-            _location = location;
-        }
-
-        readonly AdventureWorksContext _context;
-        readonly Location _location;
-
-        public int GetCountTotalInventory() =>
-            _context.Inventories.Where(x => x.LocationId == _location.LocationId).Count();
-
-        public int GetCountOccupiedInventory() =>
-            _context.Inventories.Where(x => x.LocationId == _location.LocationId && x.ProductInventory.Count() > 0).Count();
-
-        public int GetCountEmptyInventory() =>
-            _context.Inventories.Where(x => x.LocationId == _location.LocationId && x.ProductInventory.Count() <= 0).Count();
-
-        [Serial]
-        [UsePaging]
-        public IQueryable<Inventory> GetTotalInventory() =>
-            _context.Inventories.Where(x => x.LocationId == _location.LocationId);
-
-        [Serial]
-        [UsePaging]
-        public IQueryable<Inventory> GetOccupiedInventory() =>
-            _context.Inventories.Where(x => x.LocationId == _location.LocationId && x.ProductInventory.Count() > 0);
-
-        [Serial]
-        [UsePaging]
-        public IQueryable<Inventory> GetEmptyInventory() =>
-            _context.Inventories.Where(x => x.LocationId == _location.LocationId && x.ProductInventory.Count() <= 0);
     }
 }
