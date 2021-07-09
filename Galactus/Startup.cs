@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using AdventureWorks.Domain;
+using Galactus.Domain;
 using Microsoft.EntityFrameworkCore;
 using Galactus.Schema;
 using Microsoft.Extensions.Configuration;

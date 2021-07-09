@@ -1,12 +1,12 @@
-﻿using AdventureWorks.Domain;
-using AdventureWorks.Domain.Models;
+﻿using Galactus.Domain;
+using Galactus.Domain.Models;
 using HotChocolate.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Location = AdventureWorks.Domain.Models.Location;
+using Location = Galactus.Domain.Models.Location;
 
 namespace Galactus.Schema.Models
 {

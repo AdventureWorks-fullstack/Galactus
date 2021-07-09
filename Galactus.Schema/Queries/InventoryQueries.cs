@@ -1,5 +1,5 @@
-using AdventureWorks.Domain;
-using AdventureWorks.Domain.Models;
+using Galactus.Domain;
+using Galactus.Domain.Models;
 using HotChocolate;
 using HotChocolate.Data;
 using HotChocolate.Types;

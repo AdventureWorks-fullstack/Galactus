@@ -1,5 +1,5 @@
-﻿using AdventureWorks.Domain;
-using AdventureWorks.Domain.Models;
+﻿using Galactus.Domain;
+using Galactus.Domain.Models;
 using HotChocolate;
 using HotChocolate.Data;
 using HotChocolate.Types;
@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Location = AdventureWorks.Domain.Models.Location;
+using Location = Galactus.Domain.Models.Location;
 
 namespace Galactus.Schema.Queries
 {

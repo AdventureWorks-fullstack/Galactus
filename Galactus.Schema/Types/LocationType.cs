@@ -1,8 +1,8 @@
-using AdventureWorks.Domain;
+using Galactus.Domain;
 using Galactus.Schema.Models;
 using HotChocolate;
 using HotChocolate.Types;
-using Location = AdventureWorks.Domain.Models.Location;
+using Location = Galactus.Domain.Models.Location;
 
 namespace Galactus.Schema.Types
 {

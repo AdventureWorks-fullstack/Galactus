@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using AdventureWorks.Domain;
-using AdventureWorks.Domain.Models;
+using Galactus.Domain;
+using Galactus.Domain.Models;
 using Galactus.Schema.Common;
 using HotChocolate;
 using Microsoft.EntityFrameworkCore;

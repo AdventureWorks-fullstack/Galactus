@@ -9,6 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Galactus.Domain\Galactus.Domain.csproj" />
     <ProjectReference Include="..\Galactus.Schema\Galactus.Schema.csproj" />
   </ItemGroup>
 
