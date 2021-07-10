@@ -62,7 +62,7 @@ namespace Galactus.Schema.Mutations
                     InventoryId = input.NewLocationId,
                     LocationId = input.LocationId,
                     ProductId = input.ProductId,
-                    BusinessEntityId = input.EmployeeId,
+                    MovedHereByEmployeeId = input.EmployeeId,
                     StartDate = DateTime.Now
                 };
 

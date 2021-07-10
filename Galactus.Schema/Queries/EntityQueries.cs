@@ -58,6 +58,14 @@ namespace Galactus.Schema.Queries
         [UseProjection]
         [UseFiltering]
         [UseSorting]
+        public IQueryable<ProductInventory> GetProductInventories([Service] AdventureWorksContext context) =>
+            context.ProductInventories;
+
+        [Serial]
+        [UsePaging]
+        [UseProjection]
+        [UseFiltering]
+        [UseSorting]
         public IQueryable<PurchaseOrderHeader> GetPurchases([Service] AdventureWorksContext context) =>
             context.PurchaseOrderHeaders;
 

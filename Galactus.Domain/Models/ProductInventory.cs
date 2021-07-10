@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 #nullable disable
 
@@ -23,6 +24,7 @@ namespace Galactus.Domain.Models
         public virtual Location Location { get; set; }
         public virtual Product Product { get; set; }
         public virtual Inventory Inventory { get; set; }
+        //[NotMapped]
         public virtual ICollection<InventoryHistory> InventoryHistory { get; set; }
     }
 }

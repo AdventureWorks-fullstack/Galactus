@@ -11,19 +11,17 @@ namespace Galactus.Domain.Models
         public int InventoryHistoryId { get; set; }
         [ForeignKey(nameof(Models.Inventory))]
         public string InventoryId { get; set; }
-        [ForeignKey(nameof(Models.Location))]
         public short LocationId { get; set; }
-        [ForeignKey(nameof(Models.Product))]
         public int ProductId { get; set; }
         [ForeignKey(nameof(Models.Employee))]
-        public int BusinessEntityId { get; set; }
+        public int MovedHereByEmployeeId { get; set; }
 
         public DateTime StartDate { get; set; }
         public DateTime? EndDate { get; set; }
 
         public virtual Inventory Inventory { get; set; }
-        public virtual Product Product { get; set; }
-        public virtual Employee Employee { get; set; }
-        public virtual Location Location { get; set; }
+        [ForeignKey("ProductId, LocationId")]
+        public virtual ProductInventory ProductInventory { get; set; }
+        public virtual Employee MovedHereByEmployee { get; set; }
     }
 }

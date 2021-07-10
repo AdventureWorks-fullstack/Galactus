@@ -4,14 +4,16 @@ using Galactus.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Galactus.Domain.Migrations
 {
     [DbContext(typeof(AdventureWorksContext))]
-    partial class AdventureWorksContextModelSnapshot : ModelSnapshot
+    [Migration("20210710132141_RemoveLink_InventoryHistoryProductInventory")]
+    partial class RemoveLink_InventoryHistoryProductInventory
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1137,8 +1139,6 @@ namespace Galactus.Domain.Migrations
                     b.HasIndex("InventoryId");
 
                     b.HasIndex("MovedHereByEmployeeId");
-
-                    b.HasIndex("ProductId", "LocationId");
 
                     b.ToTable("InventoryHistory", "Production");
                 });
@@ -3921,17 +3921,9 @@ namespace Galactus.Domain.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Galactus.Domain.Models.ProductInventory", "ProductInventory")
-                        .WithMany("InventoryHistory")
-                        .HasForeignKey("ProductId", "LocationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Inventory");
 
                     b.Navigation("MovedHereByEmployee");
-
-                    b.Navigation("ProductInventory");
                 });
 
             modelBuilder.Entity("Galactus.Domain.Models.JobCandidate", b =>
@@ -4658,11 +4650,6 @@ namespace Galactus.Domain.Migrations
             modelBuilder.Entity("Galactus.Domain.Models.ProductDescription", b =>
                 {
                     b.Navigation("ProductModelProductDescriptionCultures");
-                });
-
-            modelBuilder.Entity("Galactus.Domain.Models.ProductInventory", b =>
-                {
-                    b.Navigation("InventoryHistory");
                 });
 
             modelBuilder.Entity("Galactus.Domain.Models.ProductModel", b =>
