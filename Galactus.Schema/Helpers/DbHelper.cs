@@ -22,7 +22,7 @@ namespace Galactus.Schema.Helpers
             // Create a mew history post
             var inventoryHistory = new InventoryHistory
             {
-                InventoryId = productInventory.InventoryId,
+                InventoryId = productInventory.Inventory.InventoryId,
                 LocationId = productInventory.LocationId,
                 ProductId = productInventory.ProductId,
                 MovedHereByEmployeeId = employeeId,

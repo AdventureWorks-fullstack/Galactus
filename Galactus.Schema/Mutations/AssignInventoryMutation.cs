@@ -19,7 +19,7 @@ namespace Galactus.Schema.Mutations
             {
                 var result = new List<ProductInventory>();
                 var productsWithoutInventory = await context.ProductInventories
-                    .Where(x => x.LocationId == input.LocationId && string.IsNullOrEmpty(x.InventoryId)).ToListAsync();
+                    .Where(x => x.LocationId == input.LocationId && x.InventoryId == null).ToListAsync();
 
                 if (productsWithoutInventory.Count() <= 0)
                     return new AssignInventoryPayload(result);

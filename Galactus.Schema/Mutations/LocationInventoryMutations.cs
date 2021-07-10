@@ -19,7 +19,7 @@ namespace Galactus.Schema.Mutations
             try
             {
                 var locationInventory = new List<Inventory>();
-                var locationInventoryId = "";
+                var inventoryName = "";
 
                 for (int nbShelves = 0; nbShelves < input.Shelves.Length; nbShelves++)
                 {
@@ -28,7 +28,7 @@ namespace Galactus.Schema.Mutations
                         for (int nbBins = 0; nbBins < input.Shelves[nbShelves][nbRows]; nbBins++)
                         {
                             // A-01-01-01
-                            locationInventoryId =
+                            inventoryName =
                                 $"{input.Prefix}-" +
                                 $"{(nbShelves + 1).ToString("00")}-" +
                                 $"{(nbRows + 1).ToString("00")}-" +
@@ -36,7 +36,7 @@ namespace Galactus.Schema.Mutations
 
                             locationInventory.Add(new Inventory
                             {
-                                InventoryId = locationInventoryId,
+                                InventoryName = inventoryName,
                                 LocationId = input.LocationId,
                             });
                         }

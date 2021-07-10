@@ -7,6 +7,16 @@ namespace Galactus.Domain.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropCheckConstraint(
+                name: "CK_ProductInventory_Shelf",
+                table: "ProductInventory",
+                schema: "Production");
+
+            migrationBuilder.DropCheckConstraint(
+                name: "CK_ProductInventory_Bin",
+                table: "ProductInventory",
+                schema: "Production");
+
             migrationBuilder.DropColumn(
                 name: "Bin",
                 schema: "Production",

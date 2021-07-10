@@ -18,7 +18,12 @@ namespace Galactus.Schema.Mutations
         {
             try
             {
-                var productInventory = await DoWork(context, input);
+                var inventory = await context.Inventories.FirstOrDefaultAsync(x => x.LocationId == input.LocationId && x.InventoryName == input.NewLocationName);
+
+                if (inventory == null)
+                    return new UpdateInventoryPayload(new List<UserError>() { new UserError($"Location does not exist '{input.NewLocationName}'", "400") });
+
+                var productInventory = await DoWork(context, input, inventory);
 
                 await context.SaveChangesAsync();
 
@@ -31,9 +36,9 @@ namespace Galactus.Schema.Mutations
             }
         }
 
-        private async Task<ProductInventory> DoWork(AdventureWorksContext context, UpdateInventoryInput input)
+        private async Task<ProductInventory> DoWork(AdventureWorksContext context, UpdateInventoryInput input, Inventory inventory)
         {
-            var productInventory = await context.ProductInventories.Include(x => x.InventoryHistory)
+            var productInventory = await context.ProductInventories.Include(x => x.InventoryHistory).ThenInclude(x => x.Inventory)
                 .FirstOrDefaultAsync(x => x.LocationId == input.LocationId && x.ProductId == input.ProductId);
 
             // A new product is being added
@@ -47,10 +52,10 @@ namespace Galactus.Schema.Mutations
             {
                 productInventory.Quantity += input.UpdateAmount;
             }
-            if (productInventory.InventoryId != input.NewLocationId)
+            if (productInventory.InventoryId != inventory.InventoryId)
             {
                 // Update the inventory position of the product
-                productInventory.InventoryId = input.NewLocationId;
+                productInventory.Inventory = inventory;
 
                 await DbHelper.AddInventoryHistory(context, productInventory, input.EmployeeId);
             }
@@ -64,7 +69,7 @@ namespace Galactus.Schema.Mutations
         int EmployeeId,
         short LocationId,
         short UpdateAmount,
-        string NewLocationId
+        string NewLocationName
     );
 
     public class UpdateInventoryPayload : Payload
