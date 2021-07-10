@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Galactus.Domain.Migrations
 {
     [DbContext(typeof(AdventureWorksContext))]
-    [Migration("20210710132141_RemoveLink_InventoryHistoryProductInventory")]
-    partial class RemoveLink_InventoryHistoryProductInventory
+    [Migration("20210710193104_Inventory")]
+    partial class Inventory
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -1096,8 +1096,13 @@ namespace Galactus.Domain.Migrations
 
             modelBuilder.Entity("Galactus.Domain.Models.Inventory", b =>
                 {
-                    b.Property<string>("InventoryId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("InventoryId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("InventoryName")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<short>("LocationId")
                         .HasColumnType("smallint");
@@ -1119,13 +1124,13 @@ namespace Galactus.Domain.Migrations
                     b.Property<DateTime?>("EndDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("InventoryId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("InventoryId")
+                        .HasColumnType("int");
 
                     b.Property<short>("LocationId")
                         .HasColumnType("smallint");
 
-                    b.Property<int>("MovedHereByEmployeeId")
+                    b.Property<int?>("MovedHereByEmployeeId")
                         .HasColumnType("int");
 
                     b.Property<int>("ProductId")
@@ -1139,6 +1144,8 @@ namespace Galactus.Domain.Migrations
                     b.HasIndex("InventoryId");
 
                     b.HasIndex("MovedHereByEmployeeId");
+
+                    b.HasIndex("ProductId", "LocationId");
 
                     b.ToTable("InventoryHistory", "Production");
                 });
@@ -1737,8 +1744,8 @@ namespace Galactus.Domain.Migrations
                         .HasColumnName("LocationID")
                         .HasComment("Inventory location identification number. Foreign key to Location.LocationID. ");
 
-                    b.Property<string>("InventoryId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int?>("InventoryId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("ModifiedDate")
                         .ValueGeneratedOnAdd()
@@ -3913,17 +3920,25 @@ namespace Galactus.Domain.Migrations
                 {
                     b.HasOne("Galactus.Domain.Models.Inventory", "Inventory")
                         .WithMany("InventoryHistory")
-                        .HasForeignKey("InventoryId");
+                        .HasForeignKey("InventoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Galactus.Domain.Models.Employee", "MovedHereByEmployee")
                         .WithMany()
-                        .HasForeignKey("MovedHereByEmployeeId")
+                        .HasForeignKey("MovedHereByEmployeeId");
+
+                    b.HasOne("Galactus.Domain.Models.ProductInventory", "ProductInventory")
+                        .WithMany("InventoryHistory")
+                        .HasForeignKey("ProductId", "LocationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Inventory");
 
                     b.Navigation("MovedHereByEmployee");
+
+                    b.Navigation("ProductInventory");
                 });
 
             modelBuilder.Entity("Galactus.Domain.Models.JobCandidate", b =>
@@ -4650,6 +4665,11 @@ namespace Galactus.Domain.Migrations
             modelBuilder.Entity("Galactus.Domain.Models.ProductDescription", b =>
                 {
                     b.Navigation("ProductModelProductDescriptionCultures");
+                });
+
+            modelBuilder.Entity("Galactus.Domain.Models.ProductInventory", b =>
+                {
+                    b.Navigation("InventoryHistory");
                 });
 
             modelBuilder.Entity("Galactus.Domain.Models.ProductModel", b =>

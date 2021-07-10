@@ -2,6 +2,8 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
+#nullable disable
+
 namespace Galactus.Domain.Models
 {
     [Table(nameof(InventoryHistory), Schema = "Production")]
@@ -9,15 +11,14 @@ namespace Galactus.Domain.Models
     {
         [Key]
         public int InventoryHistoryId { get; set; }
-        [ForeignKey(nameof(Models.Inventory))]
-        public string InventoryId { get; set; }
+        public int InventoryId { get; set; }
         public short LocationId { get; set; }
         public int ProductId { get; set; }
         [ForeignKey(nameof(Models.Employee))]
-        public int MovedHereByEmployeeId { get; set; }
+        public int? MovedHereByEmployeeId { get; set; }
 
         public DateTime StartDate { get; set; }
-        public DateTime? EndDate { get; set; }
+        public DateTime? EndDate { get; set; } // SET by trigger 'TRG_SetEndDateOnChange'
 
         public virtual Inventory Inventory { get; set; }
         [ForeignKey("ProductId, LocationId")]

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Galactus.Domain;
 using Galactus.Domain.Models;
 using Galactus.Schema.Common;
+using Galactus.Schema.Helpers;
 using HotChocolate;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,26 +13,31 @@ namespace Galactus.Schema.Mutations
 {
     public partial class Mutation
     {
-        public async Task<AssignInventoryPayload> AssignInventoryMutation([Service] AdventureWorksContext context)
+        public async Task<AssignInventoryPayload> AssignInventoryMutation([Service] AdventureWorksContext context, AssignInventoryInput input)
         {
             try
             {
                 var result = new List<ProductInventory>();
-                var productsWithoutInventory = await context.ProductInventories.Where(x => string.IsNullOrEmpty(x.InventoryId)).ToListAsync();
+                var productsWithoutInventory = await context.ProductInventories
+                    .Where(x => x.LocationId == input.LocationId && string.IsNullOrEmpty(x.InventoryId)).ToListAsync();
 
                 if (productsWithoutInventory.Count() <= 0)
                     return new AssignInventoryPayload(result);
 
-                var emptryInventories = await context.Inventories.Where(x => x.ProductInventory.Count() <= 0).ToListAsync();
+                var emptryInventories = await context.Inventories
+                    .Where(x => x.LocationId == input.LocationId && x.ProductInventory.Count() <= 0).ToListAsync();
 
                 if (emptryInventories.Count() < emptryInventories.Count())
                     throw new Exception($"Not enough empty inventories! Need: {productsWithoutInventory.Count()} Have: {emptryInventories.Count()}");
 
-                int i = 0;
-                foreach (var product in productsWithoutInventory)
+                for (int i = 0; i < productsWithoutInventory.Count; i++)
                 {
-                    product.Inventory = emptryInventories[i];
-                    i++;
+                    var product = productsWithoutInventory[i];
+                    var inventory = emptryInventories[i];
+
+                    product.Inventory = inventory;
+
+                    await DbHelper.AddInventoryHistory(context, product, null);
                 }
 
                 await context.SaveChangesAsync();
@@ -44,6 +50,10 @@ namespace Galactus.Schema.Mutations
             }
         }
     }
+
+    public record AssignInventoryInput(
+        int LocationId
+        );
 
     public class AssignInventoryPayload : Payload
     {

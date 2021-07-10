@@ -7,14 +7,6 @@ namespace Galactus.Domain.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.Sql(
-                @"ALTER TABLE Production.ProductInventory
-                    DROP constraint CK_ProductInventory_Shelf");
-
-            migrationBuilder.Sql(
-                @"ALTER TABLE Production.ProductInventory
-                    DROP constraint CK_ProductInventory_Bin");
-
             migrationBuilder.DropColumn(
                 name: "Bin",
                 schema: "Production",
@@ -25,11 +17,11 @@ namespace Galactus.Domain.Migrations
                 schema: "Production",
                 table: "ProductInventory");
 
-            migrationBuilder.AddColumn<string>(
+            migrationBuilder.AddColumn<int>(
                 name: "InventoryId",
                 schema: "Production",
                 table: "ProductInventory",
-                type: "nvarchar(450)",
+                type: "int",
                 nullable: true);
 
             migrationBuilder.CreateTable(
@@ -37,7 +29,9 @@ namespace Galactus.Domain.Migrations
                 schema: "Production",
                 columns: table => new
                 {
-                    InventoryId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    InventoryId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    InventoryName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LocationId = table.Column<short>(type: "smallint", nullable: false)
                 },
                 constraints: table =>
@@ -59,53 +53,37 @@ namespace Galactus.Domain.Migrations
                 {
                     InventoryHistoryId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    InventoryId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    InventoryId = table.Column<int>(type: "int", nullable: false),
                     LocationId = table.Column<short>(type: "smallint", nullable: false),
                     ProductId = table.Column<int>(type: "int", nullable: false),
-                    BusinessEntityId = table.Column<int>(type: "int", nullable: false),
+                    MovedHereByEmployeeId = table.Column<int>(type: "int", nullable: true),
                     StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ProductInventoryLocationId = table.Column<short>(type: "smallint", nullable: true),
-                    ProductInventoryProductId = table.Column<int>(type: "int", nullable: true)
+                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_InventoryHistory", x => x.InventoryHistoryId);
                     table.ForeignKey(
-                        name: "FK_InventoryHistory_Employee_BusinessEntityId",
-                        column: x => x.BusinessEntityId,
+                        name: "FK_InventoryHistory_Employee_MovedHereByEmployeeId",
+                        column: x => x.MovedHereByEmployeeId,
                         principalSchema: "HumanResources",
                         principalTable: "Employee",
                         principalColumn: "BusinessEntityID",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_InventoryHistory_Inventory_InventoryId",
                         column: x => x.InventoryId,
                         principalSchema: "Production",
                         principalTable: "Inventory",
                         principalColumn: "InventoryId",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_InventoryHistory_Location_LocationId",
-                        column: x => x.LocationId,
-                        principalSchema: "Production",
-                        principalTable: "Location",
-                        principalColumn: "LocationID",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_InventoryHistory_Product_ProductId",
-                        column: x => x.ProductId,
-                        principalSchema: "Production",
-                        principalTable: "Product",
-                        principalColumn: "ProductID",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_InventoryHistory_ProductInventory_ProductInventoryProductId_ProductInventoryLocationId",
-                        columns: x => new { x.ProductInventoryProductId, x.ProductInventoryLocationId },
+                        name: "FK_InventoryHistory_ProductInventory_ProductId_LocationId",
+                        columns: x => new { x.ProductId, x.LocationId },
                         principalSchema: "Production",
                         principalTable: "ProductInventory",
                         principalColumns: new[] { "ProductID", "LocationID" },
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -121,34 +99,22 @@ namespace Galactus.Domain.Migrations
                 column: "LocationId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_InventoryHistory_BusinessEntityId",
-                schema: "Production",
-                table: "InventoryHistory",
-                column: "BusinessEntityId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_InventoryHistory_InventoryId",
                 schema: "Production",
                 table: "InventoryHistory",
                 column: "InventoryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_InventoryHistory_LocationId",
+                name: "IX_InventoryHistory_MovedHereByEmployeeId",
                 schema: "Production",
                 table: "InventoryHistory",
-                column: "LocationId");
+                column: "MovedHereByEmployeeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_InventoryHistory_ProductId",
+                name: "IX_InventoryHistory_ProductId_LocationId",
                 schema: "Production",
                 table: "InventoryHistory",
-                column: "ProductId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_InventoryHistory_ProductInventoryProductId_ProductInventoryLocationId",
-                schema: "Production",
-                table: "InventoryHistory",
-                columns: new[] { "ProductInventoryProductId", "ProductInventoryLocationId" });
+                columns: new[] { "ProductId", "LocationId" });
 
             migrationBuilder.AddForeignKey(
                 name: "FK_ProductInventory_Inventory_InventoryId",

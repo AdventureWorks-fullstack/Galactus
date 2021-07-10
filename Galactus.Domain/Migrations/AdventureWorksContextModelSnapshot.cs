@@ -1094,8 +1094,13 @@ namespace Galactus.Domain.Migrations
 
             modelBuilder.Entity("Galactus.Domain.Models.Inventory", b =>
                 {
-                    b.Property<string>("InventoryId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("InventoryId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("InventoryName")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<short>("LocationId")
                         .HasColumnType("smallint");
@@ -1117,13 +1122,13 @@ namespace Galactus.Domain.Migrations
                     b.Property<DateTime?>("EndDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("InventoryId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("InventoryId")
+                        .HasColumnType("int");
 
                     b.Property<short>("LocationId")
                         .HasColumnType("smallint");
 
-                    b.Property<int>("MovedHereByEmployeeId")
+                    b.Property<int?>("MovedHereByEmployeeId")
                         .HasColumnType("int");
 
                     b.Property<int>("ProductId")
@@ -1737,8 +1742,8 @@ namespace Galactus.Domain.Migrations
                         .HasColumnName("LocationID")
                         .HasComment("Inventory location identification number. Foreign key to Location.LocationID. ");
 
-                    b.Property<string>("InventoryId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int?>("InventoryId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("ModifiedDate")
                         .ValueGeneratedOnAdd()
@@ -3913,13 +3918,13 @@ namespace Galactus.Domain.Migrations
                 {
                     b.HasOne("Galactus.Domain.Models.Inventory", "Inventory")
                         .WithMany("InventoryHistory")
-                        .HasForeignKey("InventoryId");
+                        .HasForeignKey("InventoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Galactus.Domain.Models.Employee", "MovedHereByEmployee")
                         .WithMany()
-                        .HasForeignKey("MovedHereByEmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("MovedHereByEmployeeId");
 
                     b.HasOne("Galactus.Domain.Models.ProductInventory", "ProductInventory")
                         .WithMany("InventoryHistory")

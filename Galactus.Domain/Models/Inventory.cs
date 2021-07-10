@@ -14,12 +14,13 @@ namespace Galactus.Domain.Models
         }
 
         [Key]
-        public string InventoryId { get; set; }
+        public int InventoryId { get; set; }
+        public string InventoryName { get; set; }
         [ForeignKey(nameof(Models.Location))]
         public short LocationId { get; set; }
 
         public virtual Location Location { get; set; }
-        public virtual ICollection<InventoryHistory> InventoryHistory { get; set; }
+        public virtual ICollection<InventoryHistory>? InventoryHistory { get; set; }
         public virtual ICollection<ProductInventory> ProductInventory { get; set; }
     }
 }

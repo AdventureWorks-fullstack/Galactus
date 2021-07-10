@@ -18,6 +18,7 @@ namespace Galactus.Domain.Configuration
                 .WithMany(pp => pp.InventoryHistory)
                 .HasForeignKey("LocationId", "ProductId")
                 .IsRequired(false);
+
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Galactus.Domain;
 using Galactus.Domain.Models;
 using Galactus.Schema.Common;
+using Galactus.Schema.Helpers;
 using HotChocolate;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,9 +16,6 @@ namespace Galactus.Schema.Mutations
             [Service] AdventureWorksContext context,
             UpdateInventoryInput input)
         {
-            if (string.IsNullOrEmpty(input.NewLocationId))
-                return new UpdateInventoryPayload(new List<UserError>() { new UserError("NewLocationId is null", "400") });
-
             try
             {
                 var productInventory = await DoWork(context, input);
@@ -35,7 +33,7 @@ namespace Galactus.Schema.Mutations
 
         private async Task<ProductInventory> DoWork(AdventureWorksContext context, UpdateInventoryInput input)
         {
-            var productInventory = await context.ProductInventories
+            var productInventory = await context.ProductInventories.Include(x => x.InventoryHistory)
                 .FirstOrDefaultAsync(x => x.LocationId == input.LocationId && x.ProductId == input.ProductId);
 
             // A new product is being added
@@ -54,28 +52,7 @@ namespace Galactus.Schema.Mutations
                 // Update the inventory position of the product
                 productInventory.InventoryId = input.NewLocationId;
 
-                var dateTime = DateTime.Now;
-
-                // Create a mew history post
-                var inventoryHistory = new InventoryHistory
-                {
-                    InventoryId = input.NewLocationId,
-                    LocationId = input.LocationId,
-                    ProductId = input.ProductId,
-                    MovedHereByEmployeeId = input.EmployeeId,
-                    StartDate = DateTime.Now
-                };
-
-                await context.InventoryHistories.AddAsync(inventoryHistory);
-
-                // Update EndDate of the previous history post
-                var previous = await context.InventoryHistories.FirstOrDefaultAsync(x =>
-                    x.LocationId == input.LocationId &&
-                    x.ProductId == input.ProductId &&
-                    x.EndDate == null);
-
-                if (previous != null)
-                    previous.EndDate = dateTime;
+                await DbHelper.AddInventoryHistory(context, productInventory, input.EmployeeId);
             }
 
             return productInventory;
