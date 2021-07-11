@@ -12,7 +12,7 @@ namespace Galactus.Domain.Models
         {
             ProductInventories = new HashSet<ProductInventory>();
             WorkOrderRoutings = new HashSet<WorkOrderRouting>();
-            Inventory = new HashSet<Inventory>();
+            Bins = new HashSet<Storage>();
         }
 
         public short LocationId { get; set; }
@@ -23,6 +23,6 @@ namespace Galactus.Domain.Models
 
         public virtual ICollection<ProductInventory> ProductInventories { get; set; }
         public virtual ICollection<WorkOrderRouting> WorkOrderRoutings { get; set; }
-        public virtual ICollection<Inventory> Inventory { get; set; }
+        public virtual ICollection<Storage> Bins { get; set; }
     }
 }

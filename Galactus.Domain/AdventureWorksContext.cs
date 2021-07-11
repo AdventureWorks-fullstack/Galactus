@@ -14,8 +14,9 @@ namespace Galactus.Domain
         {
         }
 
-        public virtual DbSet<InventoryHistory> InventoryHistories { get; set; }
-        public virtual DbSet<Inventory> Inventories { get; set; }
+        public virtual DbSet<Shelf> Shelves { get; set; }
+        public virtual DbSet<StorageHistory> StorageHistories { get; set; }
+        public virtual DbSet<Storage> Storages { get; set; }
         public virtual DbSet<Address> Addresses { get; set; }
         public virtual DbSet<AddressType> AddressTypes { get; set; }
         public virtual DbSet<AwbuildVersion> AwbuildVersions { get; set; }
@@ -1624,6 +1625,11 @@ namespace Galactus.Domain
                     .WithMany(p => p.ProductInventories)
                     .HasForeignKey(d => d.ProductId)
                     .OnDelete(DeleteBehavior.ClientSetNull);
+
+                entity
+                    .HasMany(a => a.Storage)
+                    .WithMany(b => b.ProductInventory)
+                    .UsingEntity(c => c.ToTable("ProductInventoryStorage", "Production"));
             });
 
             modelBuilder.Entity<ProductListPriceHistory>(entity =>

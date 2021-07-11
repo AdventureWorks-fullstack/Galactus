@@ -1092,62 +1092,6 @@ namespace Galactus.Domain.Migrations
                         .HasComment("Bicycle assembly diagrams.");
                 });
 
-            modelBuilder.Entity("Galactus.Domain.Models.Inventory", b =>
-                {
-                    b.Property<int>("InventoryId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("InventoryName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<short>("LocationId")
-                        .HasColumnType("smallint");
-
-                    b.HasKey("InventoryId");
-
-                    b.HasIndex("LocationId");
-
-                    b.ToTable("Inventory", "Production");
-                });
-
-            modelBuilder.Entity("Galactus.Domain.Models.InventoryHistory", b =>
-                {
-                    b.Property<int>("InventoryHistoryId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime?>("EndDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("InventoryId")
-                        .HasColumnType("int");
-
-                    b.Property<short>("LocationId")
-                        .HasColumnType("smallint");
-
-                    b.Property<int?>("MovedHereByEmployeeId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("InventoryHistoryId");
-
-                    b.HasIndex("InventoryId");
-
-                    b.HasIndex("MovedHereByEmployeeId");
-
-                    b.HasIndex("ProductId", "LocationId");
-
-                    b.ToTable("InventoryHistory", "Production");
-                });
-
             modelBuilder.Entity("Galactus.Domain.Models.JobCandidate", b =>
                 {
                     b.Property<int>("JobCandidateId")
@@ -1742,9 +1686,6 @@ namespace Galactus.Domain.Migrations
                         .HasColumnName("LocationID")
                         .HasComment("Inventory location identification number. Foreign key to Location.LocationID. ");
 
-                    b.Property<int?>("InventoryId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("ModifiedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime")
@@ -1764,8 +1705,6 @@ namespace Galactus.Domain.Migrations
 
                     b.HasKey("ProductId", "LocationId")
                         .HasName("PK_ProductInventory_ProductID_LocationID");
-
-                    b.HasIndex("InventoryId");
 
                     b.HasIndex("LocationId");
 
@@ -2978,6 +2917,18 @@ namespace Galactus.Domain.Migrations
                         .HasComment("Manufacturing failure reasons lookup table.");
                 });
 
+            modelBuilder.Entity("Galactus.Domain.Models.Shelf", b =>
+                {
+                    b.Property<int>("ShelfId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.HasKey("ShelfId");
+
+                    b.ToTable("Shelf", "Production");
+                });
+
             modelBuilder.Entity("Galactus.Domain.Models.Shift", b =>
                 {
                     b.Property<byte>("ShiftId")
@@ -3310,6 +3261,70 @@ namespace Galactus.Domain.Migrations
 
                     b
                         .HasComment("State and province lookup table.");
+                });
+
+            modelBuilder.Entity("Galactus.Domain.Models.Storage", b =>
+                {
+                    b.Property<int>("StorageId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<short>("LocationId")
+                        .HasColumnType("smallint");
+
+                    b.Property<int>("ShelfId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("StorageName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("StorageType")
+                        .HasColumnType("int");
+
+                    b.HasKey("StorageId");
+
+                    b.HasIndex("LocationId");
+
+                    b.HasIndex("ShelfId");
+
+                    b.ToTable("Storage", "Production");
+                });
+
+            modelBuilder.Entity("Galactus.Domain.Models.StorageHistory", b =>
+                {
+                    b.Property<int>("StorageHistoryId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<short>("LocationId")
+                        .HasColumnType("smallint");
+
+                    b.Property<int?>("MovedHereByEmployeeId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("StorageId")
+                        .HasColumnType("int");
+
+                    b.HasKey("StorageHistoryId");
+
+                    b.HasIndex("MovedHereByEmployeeId");
+
+                    b.HasIndex("StorageId");
+
+                    b.HasIndex("ProductId", "LocationId");
+
+                    b.ToTable("StorageHistory", "Production");
                 });
 
             modelBuilder.Entity("Galactus.Domain.Models.Store", b =>
@@ -3713,6 +3728,24 @@ namespace Galactus.Domain.Migrations
                         .HasComment("Work order details.");
                 });
 
+            modelBuilder.Entity("ProductInventoryStorage", b =>
+                {
+                    b.Property<int>("StorageId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductInventoryProductId")
+                        .HasColumnType("int");
+
+                    b.Property<short>("ProductInventoryLocationId")
+                        .HasColumnType("smallint");
+
+                    b.HasKey("StorageId", "ProductInventoryProductId", "ProductInventoryLocationId");
+
+                    b.HasIndex("ProductInventoryProductId", "ProductInventoryLocationId");
+
+                    b.ToTable("ProductInventoryStorage", "Production");
+                });
+
             modelBuilder.Entity("Galactus.Domain.Models.Address", b =>
                 {
                     b.HasOne("Galactus.Domain.Models.StateProvince", "StateProvince")
@@ -3903,42 +3936,6 @@ namespace Galactus.Domain.Migrations
                     b.Navigation("BusinessEntity");
                 });
 
-            modelBuilder.Entity("Galactus.Domain.Models.Inventory", b =>
-                {
-                    b.HasOne("Galactus.Domain.Models.Location", "Location")
-                        .WithMany("Inventory")
-                        .HasForeignKey("LocationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Location");
-                });
-
-            modelBuilder.Entity("Galactus.Domain.Models.InventoryHistory", b =>
-                {
-                    b.HasOne("Galactus.Domain.Models.Inventory", "Inventory")
-                        .WithMany("InventoryHistory")
-                        .HasForeignKey("InventoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Galactus.Domain.Models.Employee", "MovedHereByEmployee")
-                        .WithMany()
-                        .HasForeignKey("MovedHereByEmployeeId");
-
-                    b.HasOne("Galactus.Domain.Models.ProductInventory", "ProductInventory")
-                        .WithMany("InventoryHistory")
-                        .HasForeignKey("ProductId", "LocationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Inventory");
-
-                    b.Navigation("MovedHereByEmployee");
-
-                    b.Navigation("ProductInventory");
-                });
-
             modelBuilder.Entity("Galactus.Domain.Models.JobCandidate", b =>
                 {
                     b.HasOne("Galactus.Domain.Models.Employee", "BusinessEntity")
@@ -4041,10 +4038,6 @@ namespace Galactus.Domain.Migrations
 
             modelBuilder.Entity("Galactus.Domain.Models.ProductInventory", b =>
                 {
-                    b.HasOne("Galactus.Domain.Models.Inventory", "Inventory")
-                        .WithMany("ProductInventory")
-                        .HasForeignKey("InventoryId");
-
                     b.HasOne("Galactus.Domain.Models.Location", "Location")
                         .WithMany("ProductInventories")
                         .HasForeignKey("LocationId")
@@ -4054,8 +4047,6 @@ namespace Galactus.Domain.Migrations
                         .WithMany("ProductInventories")
                         .HasForeignKey("ProductId")
                         .IsRequired();
-
-                    b.Navigation("Inventory");
 
                     b.Navigation("Location");
 
@@ -4422,6 +4413,50 @@ namespace Galactus.Domain.Migrations
                     b.Navigation("Territory");
                 });
 
+            modelBuilder.Entity("Galactus.Domain.Models.Storage", b =>
+                {
+                    b.HasOne("Galactus.Domain.Models.Location", "Location")
+                        .WithMany("Bins")
+                        .HasForeignKey("LocationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Galactus.Domain.Models.Shelf", "Shelf")
+                        .WithMany("Storage")
+                        .HasForeignKey("ShelfId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Location");
+
+                    b.Navigation("Shelf");
+                });
+
+            modelBuilder.Entity("Galactus.Domain.Models.StorageHistory", b =>
+                {
+                    b.HasOne("Galactus.Domain.Models.Employee", "MovedHereByEmployee")
+                        .WithMany()
+                        .HasForeignKey("MovedHereByEmployeeId");
+
+                    b.HasOne("Galactus.Domain.Models.Storage", "Storage")
+                        .WithMany("StorageHistory")
+                        .HasForeignKey("StorageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Galactus.Domain.Models.ProductInventory", "ProductInventory")
+                        .WithMany("StorageHistory")
+                        .HasForeignKey("ProductId", "LocationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("MovedHereByEmployee");
+
+                    b.Navigation("ProductInventory");
+
+                    b.Navigation("Storage");
+                });
+
             modelBuilder.Entity("Galactus.Domain.Models.Store", b =>
                 {
                     b.HasOne("Galactus.Domain.Models.BusinessEntity", "BusinessEntity")
@@ -4489,6 +4524,21 @@ namespace Galactus.Domain.Migrations
                     b.Navigation("Location");
 
                     b.Navigation("WorkOrder");
+                });
+
+            modelBuilder.Entity("ProductInventoryStorage", b =>
+                {
+                    b.HasOne("Galactus.Domain.Models.Storage", null)
+                        .WithMany()
+                        .HasForeignKey("StorageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Galactus.Domain.Models.ProductInventory", null)
+                        .WithMany()
+                        .HasForeignKey("ProductInventoryProductId", "ProductInventoryLocationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Galactus.Domain.Models.Address", b =>
@@ -4586,16 +4636,9 @@ namespace Galactus.Domain.Migrations
                     b.Navigation("ProductModelIllustrations");
                 });
 
-            modelBuilder.Entity("Galactus.Domain.Models.Inventory", b =>
-                {
-                    b.Navigation("InventoryHistory");
-
-                    b.Navigation("ProductInventory");
-                });
-
             modelBuilder.Entity("Galactus.Domain.Models.Location", b =>
                 {
-                    b.Navigation("Inventory");
+                    b.Navigation("Bins");
 
                     b.Navigation("ProductInventories");
 
@@ -4667,7 +4710,7 @@ namespace Galactus.Domain.Migrations
 
             modelBuilder.Entity("Galactus.Domain.Models.ProductInventory", b =>
                 {
-                    b.Navigation("InventoryHistory");
+                    b.Navigation("StorageHistory");
                 });
 
             modelBuilder.Entity("Galactus.Domain.Models.ProductModel", b =>
@@ -4735,6 +4778,11 @@ namespace Galactus.Domain.Migrations
                     b.Navigation("WorkOrders");
                 });
 
+            modelBuilder.Entity("Galactus.Domain.Models.Shelf", b =>
+                {
+                    b.Navigation("Storage");
+                });
+
             modelBuilder.Entity("Galactus.Domain.Models.Shift", b =>
                 {
                     b.Navigation("EmployeeDepartmentHistories");
@@ -4762,6 +4810,11 @@ namespace Galactus.Domain.Migrations
                     b.Navigation("Addresses");
 
                     b.Navigation("SalesTaxRates");
+                });
+
+            modelBuilder.Entity("Galactus.Domain.Models.Storage", b =>
+                {
+                    b.Navigation("StorageHistory");
                 });
 
             modelBuilder.Entity("Galactus.Domain.Models.Store", b =>

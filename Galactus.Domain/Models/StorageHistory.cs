@@ -6,22 +6,23 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Galactus.Domain.Models
 {
-    [Table(nameof(InventoryHistory), Schema = "Production")]
-    public class InventoryHistory
+    [Table(nameof(StorageHistory), Schema = "Production")]
+    public class StorageHistory
     {
-        [Key]
-        public int InventoryHistoryId { get; set; }
-        public int InventoryId { get; set; }
+        // PK 
+        public int StorageHistoryId { get; set; }
+
+        // FK
+        public int StorageId { get; set; }
         public short LocationId { get; set; }
         public int ProductId { get; set; }
-        [ForeignKey(nameof(Models.Employee))]
         public int? MovedHereByEmployeeId { get; set; }
 
         public DateTime StartDate { get; set; }
-        public DateTime? EndDate { get; set; } // SET by trigger 'TRG_SetEndDateOnChange'
+        public DateTime? EndDate { get; set; }
 
-        public virtual Inventory Inventory { get; set; }
-        [ForeignKey("ProductId, LocationId")]
+        public virtual Storage Storage { get; set; }
+        [ForeignKey("ProductId, LocationId")] // Manual hack to make ef get the relationship
         public virtual ProductInventory ProductInventory { get; set; }
         public virtual Employee MovedHereByEmployee { get; set; }
     }

@@ -12,20 +12,20 @@ namespace Galactus.Schema.Queries
 {
     public partial class Query
     {
-        [Serial]
-        [UsePaging]
-        [UseProjection]
-        [UseFiltering]
-        [UseSorting]
-        public IQueryable<Inventory> GetInventoryEmpty([Service] AdventureWorksContext context, short locationId) =>
-            context.Inventories.Where(x => x.LocationId == locationId && x.ProductInventory.Count() <= 0);
+        //[Serial]
+        //[UsePaging]
+        //[UseProjection]
+        //[UseFiltering]
+        //[UseSorting]
+        //public IQueryable<Storage> GetInventoryEmpty([Service] AdventureWorksContext context, short locationId) =>
+        //    context.Inventories.Where(x => x.LocationId == locationId && x.ProductInventory.Count() <= 0);
 
-        [Serial]
-        [UsePaging]
-        [UseProjection]
-        [UseFiltering]
-        [UseSorting]
-        public IQueryable<Inventory> GetInventoryMultiple([Service] AdventureWorksContext context, short locationId) =>
-            context.Inventories.Where(x => x.LocationId == locationId && x.ProductInventory.Count() > 1);
+        //[Serial]
+        //[UsePaging]
+        //[UseProjection]
+        //[UseFiltering]
+        //[UseSorting]
+        //public IQueryable<Storage> GetInventoryMultiple([Service] AdventureWorksContext context, short locationId) =>
+        //    context.Inventories.Where(x => x.LocationId == locationId && x.ProductInventory.Count() > 1);
     }
 }

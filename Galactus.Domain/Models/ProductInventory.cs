@@ -12,19 +12,20 @@ namespace Galactus.Domain.Models
     {
         public ProductInventory()
         {
-            InventoryHistory = new HashSet<InventoryHistory>();
+            StorageHistory = new HashSet<StorageHistory>();
         }
 
+        // PK FK
         public int ProductId { get; set; }
         public short LocationId { get; set; }
-        public int? InventoryId { get; set; }
+
         public short Quantity { get; set; }
         public Guid Rowguid { get; set; }
         public DateTime ModifiedDate { get; set; }
 
         public virtual Location Location { get; set; }
         public virtual Product Product { get; set; }
-        public virtual Inventory Inventory { get; set; }
-        public virtual ICollection<InventoryHistory> InventoryHistory { get; set; }
+        public virtual ICollection<Storage> Storage { get; set; }
+        public virtual ICollection<StorageHistory> StorageHistory { get; set; }
     }
 }

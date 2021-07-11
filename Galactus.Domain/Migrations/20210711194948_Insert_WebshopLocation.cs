@@ -2,7 +2,7 @@
 
 namespace Galactus.Domain.Migrations
 {
-    public partial class Insert_LocationWebshop : Migration
+    public partial class Insert_WebshopLocation : Migration
     {
         string locationName = "Webshop Warehouse";
         static int locationId = 61;
