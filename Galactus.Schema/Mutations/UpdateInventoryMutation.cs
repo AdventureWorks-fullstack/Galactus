@@ -1,85 +1,92 @@
-//using System;
-//using System.Collections.Generic;
-//using System.Threading.Tasks;
-//using Galactus.Domain;
-//using Galactus.Domain.Models;
-//using Galactus.Schema.Common;
-//using Galactus.Schema.Helpers;
-//using HotChocolate;
-//using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Galactus.Domain;
+using Galactus.Domain.Models;
+using Galactus.Schema.Common;
+using Galactus.Schema.Helpers;
+using HotChocolate;
+using HotChocolate.Data;
+using HotChocolate.Types;
+using Microsoft.EntityFrameworkCore;
 
-//namespace Galactus.Schema.Mutations
-//{
-//    public partial class Mutation
-//    {
-//        public async Task<UpdateInventoryPayload> UpdateInventoryMutation(
-//            [Service] AdventureWorksContext context,
-//            UpdateInventoryInput input)
-//        {
-//            try
-//            {
-//                var inventory = await context.Inventories.FirstOrDefaultAsync(x => x.LocationId == input.LocationId && x.InventoryName == input.NewLocationName);
+namespace Galactus.Schema.Mutations
+{
+    public partial class Mutation
+    {
+        [Serial]
+        [UseProjection]
+        public async Task<UpdateInventoryPayload> UpdateInventoryMutation(
+            [Service] AdventureWorksContext context,
+            UpdateInventoryInput input)
+        {
+            try
+            {
+                var result = new List<ProductInventory>();
+                foreach (var update in input.Updates)
+                {
+                    await DoWork(context, input, update);
+                }
 
-//                if (inventory == null)
-//                    return new UpdateInventoryPayload(new List<UserError>() { new UserError($"Location does not exist '{input.NewLocationName}'", "400") });
+                await context.SaveChangesAsync();
+                return new UpdateInventoryPayload(result);
+            }
+            catch
+            {
+                // TODO log ex
+                throw;
+            }
+        }
 
-//                var productInventory = await DoWork(context, input, inventory);
+        private async Task<ProductInventory> DoWork(AdventureWorksContext context, UpdateInventoryInput input, InventoryUpdate update)
+        {
+            var productInventory = await context.ProductInventories
+                .FirstOrDefaultAsync(x => x.LocationId == input.LocationId && x.ProductId == input.ProductId);
 
-//                await context.SaveChangesAsync();
+            // A new product is being added
+            if (productInventory is null)
+            {
+                productInventory = new ProductInventory { ProductId = input.ProductId, LocationId = input.LocationId };
+                await context.ProductInventories.AddAsync(productInventory);
+            }
+            // Update the existing or new inventory
+            if (input.UpdateAmount != 0)
+            {
+                productInventory.Quantity += input.UpdateAmount;
+            }
+            if (productInventory.stor != inventory.InventoryId)
+            {
+                // Update the inventory position of the product
+                productInventory.Inventory = inventory;
 
-//                return new UpdateInventoryPayload(productInventory);
-//            }
-//            catch
-//            {
-//                // TODO log ex
-//                throw;
-//            }
-//        }
+                await DbHelper.AddInventoryHistory(context, productInventory, input.EmployeeId);
+            }
 
-//        private async Task<ProductInventory> DoWork(AdventureWorksContext context, UpdateInventoryInput input, Bin inventory)
-//        {
-//            var productInventory = await context.ProductInventories.Include(x => x.InventoryHistory).ThenInclude(x => x.Inventory)
-//                .FirstOrDefaultAsync(x => x.LocationId == input.LocationId && x.ProductId == input.ProductId);
+            return productInventory;
+        }
+    }
 
-//            // A new product is being added
-//            if (productInventory is null)
-//            {
-//                productInventory = new ProductInventory { ProductId = input.ProductId, LocationId = input.LocationId };
-//                await context.ProductInventories.AddAsync(productInventory);
-//            }
-//            // Update the existing or new inventory
-//            if (input.UpdateAmount != 0)
-//            {
-//                productInventory.Quantity += input.UpdateAmount;
-//            }
-//            if (productInventory.InventoryId != inventory.InventoryId)
-//            {
-//                // Update the inventory position of the product
-//                productInventory.Inventory = inventory;
+    public record UpdateInventoryInput(
+        int ProductId,
+        int EmployeeId,
+        short LocationId,
+        InventoryUpdate[] Updates
+    );
 
-//                await DbHelper.AddInventoryHistory(context, productInventory, input.EmployeeId);
-//            }
+    public record InventoryUpdate(
+        short UpdateAmount,
+        string OldStorageName,
+        string NewStorageName
+        );
 
-//            return productInventory;
-//        }
-//    }
+    public class UpdateInventoryPayload : Payload
+    {
+        public UpdateInventoryPayload(List<ProductInventory> productInventory)
+        {
+            ProductInventory = productInventory;
+        }
+        public UpdateInventoryPayload(IReadOnlyList<UserError> errors) : base(errors) { }
 
-//    public record UpdateInventoryInput(
-//        int ProductId,
-//        int EmployeeId,
-//        short LocationId,
-//        short UpdateAmount,
-//        string NewLocationName
-//    );
-
-//    public class UpdateInventoryPayload : Payload
-//    {
-//        public UpdateInventoryPayload(ProductInventory productInventory)
-//        {
-//            ProductInventory = productInventory;
-//        }
-//        public UpdateInventoryPayload(IReadOnlyList<UserError> errors) : base(errors) { }
-
-//        public ProductInventory? ProductInventory { get; set; }
-//    }
-//}
+        public List<ProductInventory>? ProductInventory { get; set; }
+    }
+}
